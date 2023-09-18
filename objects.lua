@@ -424,9 +424,6 @@ function EffectBar:draw()
   ]]--
 end
 
-
-
-
 HPBar = Object:extend()
 HPBar:implement(GameObject)
 HPBar:implement(Parent)
@@ -435,12 +432,10 @@ function HPBar:init(args)
   self.hidden = true
 end
 
-
 function HPBar:update(dt)
   self:update_game_object(dt)
   self:follow_parent_exclusively()
 end
-
 
 function HPBar:draw()
   if self.hidden then return end

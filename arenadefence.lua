@@ -142,13 +142,18 @@ function ArenaDefence:update(dt)
     end
     
     if input.place_defender.pressed then
-        table.insert(self.placed_defenders, Defender{
-            group = self.main, 
-            x=camera.mouse.x, 
-            y=camera.mouse.y,
-            defendertype = 'archer'
-        })
+        local defender_id = #self.placed_defenders+1
+        self.placed_defenders[defender_id] = Defender{
+          group = self.main,
+          x=camera.mouse.x,
+          y=camera.mouse.y,
+          defender_type = 'archer',
+          defender_id = defender_id,
+          xp = 0,
+          defender_level = 1
+        }
     end
+
 end
 function ArenaDefence:draw()
     self.main:draw()
@@ -156,6 +161,9 @@ function ArenaDefence:draw()
     self.ui:draw()
 
     if self.gold_text then self.gold_text:draw(64, 20) end
+    --show window dimensions here
+    --width, height = love.graphics.getDimensions()
+    --love.graphics.print('width:'..width..'height:'..height)
 end
 function ArenaDefence:spawn_enemy(n)
     n = n or 1
@@ -199,3 +207,12 @@ function ArenaDefence:spawn_n_enemies(p, j, n, pass)
       end}
     end, n, nil, 'spawn_enemies_' .. j)
   end
+function ArenaDefence:increase_xp_of_defender(defender_id, xp_amount)
+  table.foreach(self.placed_defenders,
+    function(v,k,xp_amount)
+      if k == defender_id then
+        v:increase_xp(1)
+      end
+    end
+  )
+end

@@ -22,6 +22,8 @@ function init()
   input:bind('move_down', {'s', 'down', 'dpdown'})
   input:bind('place_defender', {'m1'})
 
+
+
   local s = {tags = {sfx}}
   artificer1 = Sound('458586__inspectorj__ui-mechanical-notification-01-fx.ogg', s)
   explosion1 = Sound('Explosion Grenade_04.ogg', s)
@@ -1717,9 +1719,13 @@ function init()
   --main:go_to('mainmenu')
   gold = 0
 
-
   main:add(ArenaDefence'arenadefence')
   main:go_to('arenadefence')
+
+  if sx > 1 and sy > 1 then
+    love.window.setMode(480*sx, 270*sy)
+    state.fullscreen = false
+  end
 
   --[[
   main:add(BuyScreen'buy_screen')
@@ -1828,6 +1834,7 @@ function update(dt)
       state.fullscreen = false
     end
   end
+  
 
   if input.l.pressed then
     sx, sy = sx + 0.5, sy + 0.5
@@ -1842,6 +1849,8 @@ function update(dt)
     steam.userStats.storeStats()
   end
   ]]--
+
+
 end
 
 

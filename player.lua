@@ -2053,6 +2053,8 @@ function Projectile:init(args)
   self.chain_enemies_hit = {}
   self.infused_enemies_hit = {}
 
+  self.defender_id = args.defender_id
+
   if self.character == 'sage' then
     elementor1:play{pitch = random:float(0.9, 1.1), volume = 0.5}
     self.compression_dmg = self.dmg
@@ -2352,6 +2354,9 @@ function Projectile:on_trigger_enter(other, contact)
   if self.character == 'sage' then return end
 
   if table.any(main.current.enemies, function(v) return other:is(v) end) then
+    --then this projectile hit an enemy so we need to increase xp
+    main.current:increase_xp_of_defender(self.defender_id, 1)
+    print(self.defender_id)
     if self.pierce <= 0 and self.chain <= 0 then
       self:die(self.x, self.y, nil, random:int(2, 3))
     else

@@ -1,3 +1,5 @@
+Defenders need to gain xp and have an xp bar show up after kill
+
 Weekly maintenance updates:
 
 #3
@@ -7,7 +9,7 @@ Weekly maintenance updates:
   * Improved descriptions for engineer and sentry to avoid confusion
   * Fixed engineer's and artificer's cooldown not being displayed properly
   * Changed freezing field's color to blue for better visual clarity
-  * Increased cryomancer's area of effect by 50%
+  * Increased cryomancer's area of effect by 50% 
   * Increased bane's void rift's size by 50%
   * Beastmaster now has 10% crit chance by default
   * The fairy will no longer buff non-attacking units
@@ -93,10 +95,13 @@ https://steamcommunity.com/app/915310/discussions/0/4658391921156325745/ - math 
 https://steamcommunity.com/app/915310/discussions/0/3069747783686815659/ - general feedback
 https://steamcommunity.com/app/915310/discussions/0/3069747783688708231/ - general feedback
 https://steamcommunity.com/app/915310/discussions/0/3046104862443040220/ - general feedback
+
 Challenge mode
   Units die permanently when they die
   Slower scaling with less individually threatening units
   Max snake size goes up every 10 levels
+
+
 Draft mode
 Enemy ideas - https://steamcommunity.com/app/915310/discussions/0/3069747783691890511/
 Unit ideas - https://i.imgur.com/VNMS2YV.png
