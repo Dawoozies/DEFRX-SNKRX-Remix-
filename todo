@@ -2,3 +2,27 @@ Defenders need to gain xp and have an xp bar show up after kill
 Make start on menu which you'll be able to place your hired defenders from
 Once placed down you can take your defenders away but only when a wave is not in progress
 Make things like character damage and cooldown be fields of Defender, and defined on construction
+
+Mining/resource gathering/idle type area
+Like Idle Miner but you mine resources from corrupted stone monsters (cubes with shiny metal spots like living ore rock monsters) the important thing is if a defender
+dies to one of these monsters, you will lose the defender. Defender permadeath should be in main game as well.
+
+Collective Knowledge:
+Defenders have skills which relate to their fighting style e.g. Archer use bows so have access to the archery collective knowledge. A level 1 archer gets xp, this also increases the collective knowledge gained of archery by a small factor. Perma rewards are in Collective Knowledge. In order to gain xp towards Archery Collective Knowledge Level 2 you must have a defender who uses this skill earn xp, i.e. a bunch of level 1 archers cannot farm a shit ton of collective knowledge because a bunch of level 1 archers
+are essentially all rookies.
+
+This kind of unlocking system makes high level defenders very very valuable. Lower level defenders can benefit from the knowledge gained by higher level defenders but they themselves cannot contribute anything themselves until they are as experienced.
+
+The player must account for this over the course of the game. High level defenders should not be treated as fodder. but low level defenders can be.
+
+Equipment/Gear:
+Defender gear can be bought from a shop, defenders can be equipped with gear, gear will not be levelled, i hate managing levelled gear especially when dealing with lots of units of varying levels. i.e. i don't want a player to lose all their high level defenders and then hire a bunch of rookie defenders and then have to buy a bunch of starting gear for them when they have grinded out amazing weapons already. Equipment and gear should be seen as a part of the perma rewards system but should have a different progression path to the Collective Knowledge system: i.e. it is not level locked.
+
+To acquire good gear you need only gold and resources (from the mining/resource gathering part of the game)
+
+Training:
+A slower but idle solution to training defender level, the only caveat is if you want to train an archer to lvl 5 you must have collective knowledge of the archer tree be at level 5. This also applies to class branches. I.e. if to train an archer to become a lvl 1 Arbalist you must have gone down the archery tree and unlocked the Arbalist class, then you must have gained level 1 in collective knowledge for the arbalist tree
+
+Gold:
+Used for gaining access to higher tier gear, higher tier defenders.
+Used for training
