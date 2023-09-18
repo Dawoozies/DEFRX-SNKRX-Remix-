@@ -147,7 +147,8 @@ function ArenaDefence:update(dt)
           group = self.main,
           x=camera.mouse.x,
           y=camera.mouse.y,
-          defender_type = 'archer',
+          --defender_type = 'archer',
+          defender_type = 'swordsman',
           defender_id = defender_id,
           xp = 0,
           defender_level = 1

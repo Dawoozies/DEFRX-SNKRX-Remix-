@@ -39,6 +39,14 @@ function Defender:init(args)
         end
     end, nil, nil, 'shoot')
     end
+
+    if self.defender_type == 'swordsman' then
+      self.attack_sensor = Circle(self.x, self.y, 48)
+      --original cooldown = 3
+      self.t:cooldown(0.5, function() local enemies = self:get_objects_in_shape(self.attack_sensor, main.current.enemies); return enemies and #enemies > 0 end, function()
+        self:attack(48)
+      end, nil, nil, 'attack')
+    end
 end
 function Defender:update(dt)
     self:update_game_object(dt)
@@ -108,6 +116,7 @@ function Defender:draw()
     x=self.x+0.8*self.shape.w*math.cos(r), 
     y=self.y+0.8*self.shape.w*math.sin(r),
     rs = 6}
+
     local defender_info = {group = main.current.main,
     x=self.x+1.6*self.shape.w*math.cos(r),
     y=self.y+1.6*self.shape.w*math.sin(r),
@@ -116,12 +125,45 @@ function Defender:draw()
     color=self.color,
     dmg=self.dmg*dmg_m,
     crit=crit,
-    character=self.character,
+    character=self.defender_type,
     parent=self,
     level=self.level,
     defender_id=self.defender_id
     }
     Projectile(table.merge(defender_info, mods or {}))
+  end
+  function Defender:attack(area, mods)
+    mods = mods or {}
+    camera:shake(2, 0.5)
+    self.hfx:use('shoot', 0.25)
+
+    local defender_info = {group = main.current.effects, 
+    x = mods.x or self.x, 
+    y = mods.y or self.y, 
+    r = self.r, 
+    w = self.area_size_m*(area or 64), 
+    color = self.color, 
+    dmg = self.area_dmg_m*self.dmg,
+    character = self.defender_type, 
+    level = self.level, 
+    parent = self,
+    defender_id=self.defender_id,
+    }
+    Area(table.merge(defender_info, mods))
+  
+    if self.defender_type == 'swordsman' or self.defender_type == 'barbarian' or self.defender_type == 'juggernaut' or self.defender_type == 'highlander' then
+      _G[random:table{'swordsman1', 'swordsman2'}]:play{pitch = random:float(0.9, 1.1), volume = 0.75}
+    elseif self.defender_type == 'elementor' then
+      elementor1:play{pitch = random:float(0.9, 1.1), volume = 0.5}
+    elseif self.defender_type == 'psychic' then
+      psychic1:play{pitch = random:float(0.9, 1.1), volume = 0.4}
+    elseif self.defender_type == 'launcher' then
+      buff1:play{pitch == random:float(0.9, 1.1), volume = 0.5}
+    end
+  
+    if self.defender_type == 'juggernaut' then
+      elementor1:play{pitch = random:float(0.9, 1.1), volume = 0.5}
+    end    
   end
 function Defender:increase_xp(amount)
   self.xp = self.xp + amount

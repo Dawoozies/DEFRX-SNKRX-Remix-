@@ -2356,7 +2356,7 @@ function Projectile:on_trigger_enter(other, contact)
   if table.any(main.current.enemies, function(v) return other:is(v) end) then
     --then this projectile hit an enemy so we need to increase xp
     main.current:increase_xp_of_defender(self.defender_id, 1)
-    print(self.defender_id)
+
     if self.pierce <= 0 and self.chain <= 0 then
       self:die(self.x, self.y, nil, random:int(2, 3))
     else
@@ -2516,6 +2516,11 @@ function Area:init(args)
   self.shape = Rectangle(self.x, self.y, 1.5*self.w, 1.5*self.w, self.r)
   local enemies = main.current.main:get_objects_in_shape(self.shape, main.current.enemies)
   for _, enemy in ipairs(enemies) do
+
+    --in this for loop we iterate through all things the area hit
+    --so for each instance of dmg increase xp
+    main.current:increase_xp_of_defender(self.defender_id, 1)
+
     local resonance_dmg = 0
     local resonance_m = (self.parent.resonance == 1 and 0.03) or (self.parent.resonance == 2 and 0.05) or (self.parent.resonance == 3 and 0.07) or 0
     if self.character == 'elementor' then
