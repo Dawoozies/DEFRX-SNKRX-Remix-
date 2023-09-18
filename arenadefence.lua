@@ -122,9 +122,23 @@ function ArenaDefence:on_enter(from, level, loop, units, passives, shop_level, s
     --defenders gain xp for themselves and their class
     --a low level defender generates much much less xp for their class if a higher level
     --expose the attack speed as a slider below each defender
-    self.defenders = {
-        {character = 'archer', defenderlevel = 1, defenderxp = 0}
+    self.reserve_defenders = {
+      {
+        defender_type = 'archer', 
+        defender_level = 1, 
+        defender_color = green[0],
+        xp = 0,
+        defender_base_dmg = 1,
+      },
+      {
+        defender_type = 'swordsman',
+        defender_level = 1,
+        defender_color = yellow[0],
+        xp = 0,
+        defender_base_dmg = 4,
+      }
     }
+    self.reserve_selection = 1
     self.placed_defenders = {}
 end
 function ArenaDefence:update(dt)
@@ -141,18 +155,31 @@ function ArenaDefence:update(dt)
         self:spawn_n_enemies(p, 1, 8, true)
     end
     
+    if input.e.pressed and #self.reserve_defenders > 0 then
+      self.reserve_selection = (self.reserve_selection + 1)%(#self.reserve_defenders+1)
+      if self.reserve_selection == 0 then
+        self.reserve_selection = 1
+      end
+    end
+
+    
+
     if input.place_defender.pressed then
         local defender_id = #self.placed_defenders+1
+        local reserve_defender = self.reserve_defenders[self.reserve_selection]
         self.placed_defenders[defender_id] = Defender{
           group = self.main,
           x=camera.mouse.x,
           y=camera.mouse.y,
           --defender_type = 'archer',
-          defender_type = 'swordsman',
+          defender_type = reserve_defender.defender_type,
+          defender_level = reserve_defender.defender_level,
+          xp = reserve_defender.xp,
+          defender_color = reserve_defender.defender_color,
           defender_id = defender_id,
-          xp = 0,
-          defender_level = 1
+          defender_base_dmg = reserve_defender.defender_base_dmg,
         }
+        table.remove(self.reserve_defenders, self.reserve_selection)
     end
 
 end
@@ -162,6 +189,8 @@ function ArenaDefence:draw()
     self.ui:draw()
 
     if self.gold_text then self.gold_text:draw(64, 20) end
+
+    love.graphics.print('reserve selection='..self.reserve_selection)
     --show window dimensions here
     --width, height = love.graphics.getDimensions()
     --love.graphics.print('width:'..width..'height:'..height)

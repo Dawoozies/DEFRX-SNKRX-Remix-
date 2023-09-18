@@ -11,14 +11,14 @@ function Defender:init(args)
     --original size is 9,9
     self:set_as_rectangle(9,9,'dynamic','defender')
     --self:set_as_triangle(9,9, 'dynamic', 'defender')
-    self.color = blue[0]
+    self.color = args.defender_color
     self:set_damping(100)
     self.visual_shape = 'rectangle'
     --self.visual_shape = 'triangle'
     self.damage_dealt = 0
+    self.defender_base_dmg = args.defender_base_dmg
 
     self.defender_id = args.defender_id
-    print('args.defender_id:'..args.defender_id)
     self.xp = args.xp
     self.defender_level = args.defender_level
     if self.defender_level == 1 then
@@ -35,7 +35,7 @@ function Defender:init(args)
         self.t:cooldown(2, function() local enemies = self:get_objects_in_shape(self.attack_sensor, main.current.enemies); return enemies and #enemies > 0 end, function()
         local closest_enemy = self:get_closest_object_in_shape(self.attack_sensor, main.current.enemies)
         if closest_enemy then
-            self:shoot(self:angle_to_object(closest_enemy), {pierce = 0, ricochet = 0})
+            self:shoot(self:angle_to_object(closest_enemy), {defender_base_dmg = self.defender_base_dmg, pierce = 0, ricochet = 0})
         end
     end, nil, nil, 'shoot')
     end
@@ -44,7 +44,7 @@ function Defender:init(args)
       self.attack_sensor = Circle(self.x, self.y, 48)
       --original cooldown = 3
       self.t:cooldown(0.5, function() local enemies = self:get_objects_in_shape(self.attack_sensor, main.current.enemies); return enemies and #enemies > 0 end, function()
-        self:attack(48)
+        self:attack(48, {defender_base_dmg = self.defender_base_dmg})
       end, nil, nil, 'attack')
     end
 end
@@ -105,7 +105,7 @@ function Defender:draw()
     camera:spring_shake(0.025, r)
     self.hfx:use('shoot', 0.25)
   
-    local dmg_m = 1
+    local dmg_m = mods.defender_base_dmg
     local crit = false
 
     if self.defender_type == 'archer' then
@@ -123,7 +123,7 @@ function Defender:draw()
     v=250,
     r=r,
     color=self.color,
-    dmg=self.dmg*dmg_m,
+    dmg=mods.defender_base_dmg,
     crit=crit,
     character=self.defender_type,
     parent=self,
@@ -143,7 +143,7 @@ function Defender:draw()
     r = self.r, 
     w = self.area_size_m*(area or 64), 
     color = self.color, 
-    dmg = self.area_dmg_m*self.dmg,
+    dmg = mods.defender_base_dmg,
     character = self.defender_type, 
     level = self.level, 
     parent = self,

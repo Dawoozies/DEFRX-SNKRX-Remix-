@@ -1,8 +1,10 @@
+TODO:
 Defenders need to gain xp and have an xp bar show up after kill
 Make start on menu which you'll be able to place your hired defenders from
 Once placed down you can take your defenders away but only when a wave is not in progress
 Make things like character damage and cooldown be fields of Defender, and defined on construction
 
+TODO LATER:
 Mining/resource gathering/idle type area
 Like Idle Miner but you mine resources from corrupted stone monsters (cubes with shiny metal spots like living ore rock monsters) the important thing is if a defender
 dies to one of these monsters, you will lose the defender. Defender permadeath should be in main game as well.
