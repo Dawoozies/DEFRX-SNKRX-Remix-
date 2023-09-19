@@ -11,6 +11,8 @@ require 'media'
 --My additions
 require 'arenadefence'
 require 'defenders'
+require 'shop_screen'
+require 'button'
 function init()
   shared_init()
 
@@ -1719,14 +1721,16 @@ function init()
   --main:go_to('mainmenu')
   gold = 0
 
-  main:add(ArenaDefence'arenadefence')
-  main:go_to('arenadefence')
+  --main:add(ArenaDefence'arenadefence')
+  --main:go_to('arenadefence')
+
+  main:add(ShopScreen'shop_screen')
+  main:go_to('shop_screen')
 
   if sx > 1 and sy > 1 then
     love.window.setMode(480*sx, 270*sy)
     state.fullscreen = false
   end
-
   --[[
   main:add(BuyScreen'buy_screen')
   main:go_to('buy_screen', run.level or 1, run.units or {}, passives, run.shop_level or 1, run.shop_xp or 0)
