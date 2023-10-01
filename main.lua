@@ -2,7 +2,6 @@ require 'engine'
 require 'shared'
 require 'arena'
 require 'mainmenu'
-require 'buy_screen'
 require 'objects'
 require 'player'
 require 'enemies'
@@ -12,7 +11,6 @@ require 'media'
 require 'arenadefence'
 require 'defenders'
 require 'shop_screen'
-require 'button'
 function init()
   shared_init()
 
@@ -23,7 +21,6 @@ function init()
   input:bind('move_up', {'w', 'up', 'dpup'})
   input:bind('move_down', {'s', 'down', 'dpdown'})
   input:bind('place_defender', {'m1'})
-
 
 
   local s = {tags = {sfx}}
@@ -1714,7 +1711,7 @@ function init()
   if not state.current_new_game_plus then state.current_new_game_plus = current_new_game_plus end
   max_units = math.clamp(8 + current_new_game_plus, 8, 12)
 
-  main_song_instance = _G[random:table{'song1', 'song2', 'song3', 'song4', 'song5'}]:play{volume = 0.5}
+  main_song_instance = _G[random:table{'song1', 'song2', 'song3', 'song4', 'song5'}]:play{volume = 0}
   main = Main()
 
   --main:add(MainMenu'mainmenu')
@@ -1731,11 +1728,9 @@ function init()
     love.window.setMode(480*sx, 270*sy)
     state.fullscreen = false
   end
-  --[[
-  main:add(BuyScreen'buy_screen')
-  main:go_to('buy_screen', run.level or 1, run.units or {}, passives, run.shop_level or 1, run.shop_xp or 0)
+  --main:add(BuyScreen'buy_screen')
+  --main:go_to('buy_screen', 1, {'archer'}, passives, 1, 0)
   -- main:go_to('buy_screen', 7, run.units or {}, {'unleash'})
-  ]]--
   
   --[[
   gold = 10

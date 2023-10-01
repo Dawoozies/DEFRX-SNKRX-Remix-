@@ -41,6 +41,7 @@ if not path:find("init") then
   require(path .. ".game.springs")
   require(path .. ".game.flashes")
   require(path .. ".game.hitfx")
+  require(path .. ".API")
 end
 
 function engine_run(config)

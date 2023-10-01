@@ -9,6 +9,7 @@ end
 function ShopScreen:on_enter(args)
     camera.x, camera.y = gw/2, gh/2
     input:set_mouse_visible(true)
+    self.main = Group()
 end
 
 function ShopScreen:update(dt)

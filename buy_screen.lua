@@ -39,7 +39,7 @@ end
 
 
 function BuyScreen:on_enter(from, level, loop, units, passives, shop_level, shop_xp)
-  self.level = level
+  self.level = 1
   self.loop = loop
   self.units = units
   self.passives = passives
@@ -62,21 +62,17 @@ function BuyScreen:on_enter(from, level, loop, units, passives, shop_level, shop
   self.locked = locked_state and locked_state.locked
   LockButton{group = self.main, x = 205, y = 18, parent = self}
 
-  self:set_cards(self.shop_level, nil, true)
-  self:set_party_and_sets()
-  self:set_items()
+  self.defenders = {'archer'}
+
+  self:set_cards(1, nil, true)
+  --self:set_party_and_sets()
+  --self:set_items()
 
   self.shop_text = Text({{text = '[wavy_mid, fg]shop [fg]- gold: [yellow]' .. gold, font = pixul_font, alignment = 'center'}}, global_text_tags)
-  self.party_text = Text({{text = '[wavy_mid, fg]party ' .. tostring(#units) .. '/' .. tostring(max_units), font = pixul_font, alignment = 'center'}}, global_text_tags)
+  self.party_text = Text({{text = '[wavy_mid, fg]party ' .. tostring(#self.defenders) .. '/' .. tostring(max_units), font = pixul_font, alignment = 'center'}}, global_text_tags)
   self.sets_text = Text({{text = '[wavy_mid, fg]classes', font = pixul_font, alignment = 'center'}}, global_text_tags)
   self.items_text = Text({{text = '[wavy_mid, fg]items', font = pixul_font, alignment = 'center'}}, global_text_tags)
   self.ng_text = Text({{text = '[fg]NG+' .. current_new_game_plus, font = pixul_font, alignment = 'center'}}, global_text_tags)
-  local get_elite_str = function(lvl)
-    if (lvl-(25*self.loop)) % 6 == 0 or lvl % 25 == 0 then return ' (elite)'
-    elseif (lvl-(25*self.loop)) % 3 == 0 then return ' (hard)'
-    else return '' end
-  end
-  self.level_text = Text({{text = '[fg]Lv.' .. tostring(self.level) .. get_elite_str(self.level), font = pixul_font, alignment = 'center'}}, global_text_tags)
 
   RerollButton{group = self.main, x = 150, y = 18, parent = self}
   GoButton{group = self.main, x = gw - 90, y = gh - 20, parent = self}
@@ -171,7 +167,6 @@ function BuyScreen:on_enter(from, level, loop, units, passives, shop_level, shop
 
   trigger:tween(1, main_song_instance, {volume = 0.2, pitch = 1}, math.linear)
 
-  locked_state = {locked = self.locked, cards = {self.cards[1] and self.cards[1].unit, self.cards[2] and self.cards[2].unit, self.cards[3] and self.cards[3].unit}} 
   system.save_run(self.level, self.loop, gold, self.units, self.passives, self.shop_level, self.shop_xp, run_passive_pool, locked_state)
 end
 
@@ -179,10 +174,6 @@ end
 function BuyScreen:update(dt)
   if main_song_instance:isStopped() then
     main_song_instance = _G[random:table{'song1', 'song2', 'song3', 'song4', 'song5'}]:play{volume = 0.2}
-  end
-
-  if not self.paused then
-    run_time = run_time + dt
   end
 
   self:update_game_object(dt*slow_amount)
@@ -214,9 +205,6 @@ function BuyScreen:update(dt)
     end
   end
 
-  for _, part in ipairs(self.characters) do
-    part.y = 40 + (part.i-1)*19
-  end
 end
 
 
@@ -349,22 +337,16 @@ function BuyScreen:set_cards(shop_level, dont_spawn_effect, first_call)
   local unit_2
   local unit_3
   local shop_level = shop_level or 1
+  unit_1 = 'archer'
+  unit_2 = 'swordsman'
+  unit_3 = 'swordsman'
+  all_units = {unit_1,unit_2,unit_3}
   local tier_weights = level_to_shop_odds[shop_level]
-  repeat 
-    unit_1 = random:table(tier_to_characters[random:weighted_pick(unpack(tier_weights))])
-    unit_2 = random:table(tier_to_characters[random:weighted_pick(unpack(tier_weights))])
-    unit_3 = random:table(tier_to_characters[random:weighted_pick(unpack(tier_weights))])
-    all_units = {unit_1, unit_2, unit_3}
-  until not table.all(all_units, function(v) return table.any(non_attacking_characters, function(u) return v == u end) end)
-  if first_call and locked_state then
-    if locked_state.cards[1] then self.cards[1] = ShopCard{group = self.main, x = 60, y = 75, w = 80, h = 90, unit = locked_state.cards[1], parent = self, i = 1} end
-    if locked_state.cards[2] then self.cards[2] = ShopCard{group = self.main, x = 140, y = 75, w = 80, h = 90, unit = locked_state.cards[2], parent = self, i = 2} end
-    if locked_state.cards[3] then self.cards[3] = ShopCard{group = self.main, x = 220, y = 75, w = 80, h = 90, unit = locked_state.cards[3], parent = self, i = 3} end
-  else
-    self.cards[1] = ShopCard{group = self.main, x = 60, y = 75, w = 80, h = 90, unit = unit_1, parent = self, i = 1}
-    self.cards[2] = ShopCard{group = self.main, x = 140, y = 75, w = 80, h = 90, unit = unit_2, parent = self, i = 2}
-    self.cards[3] = ShopCard{group = self.main, x = 220, y = 75, w = 80, h = 90, unit = unit_3, parent = self, i = 3}
-  end
+  --until not table.all(all_units, function(v) return table.any(non_attacking_characters, function(u) return v == u end) end)
+  --error here
+  self.cards[1] = ShopCard{group = self.main, x = 60, y = 75, w = 80, h = 90, unit = unit_1, parent = self, i = 1}
+  self.cards[2] = ShopCard{group = self.main, x = 140, y = 75, w = 80, h = 90, unit = unit_2, parent = self, i = 2}
+  self.cards[3] = ShopCard{group = self.main, x = 220, y = 75, w = 80, h = 90, unit = unit_3, parent = self, i = 3}
 end
 
 
@@ -399,9 +381,6 @@ function BuyScreen:set_items()
   end
 end
 
-
-
-
 SteamFollowButton = Object:extend()
 SteamFollowButton:implement(GameObject)
 function SteamFollowButton:init(args)
@@ -410,8 +389,6 @@ function SteamFollowButton:init(args)
   self.shape = Rectangle(self.x, self.y, pixul_font:get_text_width('follow me on steam!') + 12, pixul_font.h + 4)
   self.text = Text({{text = '[greenm5]follow me on steam!', font = pixul_font, alignment = 'center'}}, global_text_tags)
 end
-
-
 function SteamFollowButton:update(dt)
   self:update_game_object(dt)
   if main.current.in_credits then return end
@@ -424,16 +401,12 @@ function SteamFollowButton:update(dt)
     system.open_url'https://store.steampowered.com/dev/a327ex/'
   end
 end
-
-
 function SteamFollowButton:draw()
   graphics.push(self.x, self.y, 0, self.spring.x, self.spring.y)
     graphics.rectangle(self.x, self.y, self.shape.w, self.shape.h, 4, 4, self.selected and fg[0] or green[0])
     self.text:draw(self.x, self.y)
   graphics.pop()
 end
-
-
 function SteamFollowButton:on_mouse_enter()
   if main.current.in_credits then return end
   love.mouse.setCursor(love.mouse.getSystemCursor'hand')
@@ -443,17 +416,12 @@ function SteamFollowButton:on_mouse_enter()
   self.text:set_text{{text = '[fgm5]follow me on steam!', font = pixul_font, alignment = 'center'}}
   self.spring:pull(0.05, 200, 10)
 end
-
-
 function SteamFollowButton:on_mouse_exit()
   if main.current.in_credits then return end
   love.mouse.setCursor()
   self.text:set_text{{text = '[greenm5]follow me on steam!', font = pixul_font, alignment = 'center'}}
   self.selected = false
 end
-
-
-
 
 WishlistButton = Object:extend()
 WishlistButton:implement(GameObject)
@@ -468,8 +436,6 @@ function WishlistButton:init(args)
     self.text = Text({{text = '[bg10]wishlist on steam', font = pixul_font, alignment = 'center'}}, global_text_tags)
   end
 end
-
-
 function WishlistButton:update(dt)
   self:update_game_object(dt)
 
@@ -481,16 +447,12 @@ function WishlistButton:update(dt)
     system.open_url'https://store.steampowered.com/app/915310/SNKRX/'
   end
 end
-
-
 function WishlistButton:draw()
   graphics.push(self.x, self.y, 0, self.spring.x, self.spring.y)
     graphics.rectangle(self.x, self.y, self.shape.w, self.shape.h, 4, 4, self.selected and fg[0] or bg[1])
     self.text:draw(self.x, self.y + 1)
   graphics.pop()
 end
-
-
 function WishlistButton:on_mouse_enter()
   ui_hover1:play{pitch = random:float(1.3, 1.5), volume = 0.5}
   pop2:play{pitch = random:float(0.95, 1.05), volume = 0.5}
@@ -502,8 +464,6 @@ function WishlistButton:on_mouse_enter()
   end
   self.spring:pull(0.2, 200, 10)
 end
-
-
 function WishlistButton:on_mouse_exit()
   if self.w_to_wishlist then
     self.text:set_text{{text = '[bg10]w to wishlist', font = pixul_font, alignment = 'center'}}
@@ -513,9 +473,6 @@ function WishlistButton:on_mouse_exit()
   self.selected = false
 end
 
-
-
-
 RestartButton = Object:extend()
 RestartButton:implement(GameObject)
 function RestartButton:init(args)
@@ -524,8 +481,6 @@ function RestartButton:init(args)
   self.interact_with_mouse = true
   self.text = Text({{text = '[bg10]NG+' .. tostring(current_new_game_plus), font = pixul_font, alignment = 'center'}}, global_text_tags)
 end
-
-
 function RestartButton:update(dt)
   if main.current.in_credits then return end
   self:update_game_object(dt)
@@ -559,16 +514,12 @@ function RestartButton:update(dt)
     end, text = Text({{text = '[wavy, ' .. tostring(state.dark_transitions and 'fg' or 'bg') .. ']restarting...', font = pixul_font, alignment = 'center'}}, global_text_tags)}
   end
 end
-
-
 function RestartButton:draw()
   graphics.push(self.x, self.y, 0, self.spring.x, self.spring.y)
     graphics.rectangle(self.x, self.y, self.shape.w, self.shape.h, 4, 4, self.selected and fg[0] or bg[1])
     self.text:draw(self.x, self.y + 1, 0, 1, 1)
   graphics.pop()
 end
-
-
 function RestartButton:on_mouse_enter()
   if main.current.in_credits then return end
   ui_hover1:play{pitch = random:float(1.3, 1.5), volume = 0.5}
@@ -577,16 +528,11 @@ function RestartButton:on_mouse_enter()
   self.text:set_text{{text = '[fgm5]NG+' .. tostring(current_new_game_plus), font = pixul_font, alignment = 'center'}}
   self.spring:pull(0.2, 200, 10)
 end
-
-
 function RestartButton:on_mouse_exit()
   if main.current.in_credits then return end
   self.text:set_text{{text = '[bg10]NG+' .. tostring(current_new_game_plus), font = pixul_font, alignment = 'center'}}
   self.selected = false
 end
-
-
-
 
 Button = Object:extend()
 Button:implement(GameObject)
@@ -596,8 +542,6 @@ function Button:init(args)
   self.interact_with_mouse = true
   self.text = Text({{text = '[' .. self.fg_color .. ']' .. self.button_text, font = pixul_font, alignment = 'center'}}, global_text_tags)
 end
-
-
 function Button:update(dt)
   self:update_game_object(dt)
   if main.current.in_credits and not self.credits_button then return end
@@ -631,8 +575,6 @@ function Button:update(dt)
     end
   end
 end
-
-
 function Button:draw()
   graphics.push(self.x, self.y, 0, self.spring.x, self.spring.y)
     if self.hold_button and self.press_time then
@@ -645,8 +587,6 @@ function Button:draw()
     self.text:draw(self.x, self.y + 1, 0, 1, 1)
   graphics.pop()
 end
-
-
 function Button:on_mouse_enter()
   if main.current.in_credits and not self.credits_button then return end
   ui_hover1:play{pitch = random:float(1.3, 1.5), volume = 0.5}
@@ -656,24 +596,17 @@ function Button:on_mouse_enter()
   self.spring:pull(0.2, 200, 10)
   if self.mouse_enter then self:mouse_enter() end
 end
-
-
 function Button:on_mouse_exit()
   if main.current.in_credits and not self.credits_button then return end
   self.text:set_text{{text = '[' .. self.fg_color .. ']' .. self.button_text, font = pixul_font, alignment = 'center'}}
   self.selected = false
   if self.mouse_exit then self:mouse_exit() end
 end
-
-
 function Button:set_text(text)
   self.button_text = text
   self.text:set_text{{text = '[' .. self.fg_color .. ']' .. self.button_text, font = pixul_font, alignment = 'center'}}
   self.spring:pull(0.2, 200, 10)
 end
-
-
-
 
 GoButton = Object:extend()
 GoButton:implement(GameObject)
@@ -683,8 +616,6 @@ function GoButton:init(args)
   self.interact_with_mouse = true
   self.text = Text({{text = '[greenm5]GO!', font = pixul_font, alignment = 'center'}}, global_text_tags)
 end
-
-
 function GoButton:update(dt)
   self:update_game_object(dt)
 
@@ -718,16 +649,12 @@ function GoButton:update(dt)
     if input.enter.pressed then self.selected = false end
   end
 end
-
-
 function GoButton:draw()
   graphics.push(self.x, self.y, 0, self.spring.x, self.spring.y)
     graphics.rectangle(self.x, self.y, self.shape.w, self.shape.h, 4, 4, self.selected and fg[0] or green[0])
     self.text:draw(self.x, self.y + 1, 0, 1, 1)
   graphics.pop()
 end
-
-
 function GoButton:on_mouse_enter()
   ui_hover1:play{pitch = random:float(1.3, 1.5), volume = 0.5}
   pop2:play{pitch = random:float(0.95, 1.05), volume = 0.5}
@@ -735,13 +662,10 @@ function GoButton:on_mouse_enter()
   self.text:set_text{{text = '[fgm5]GO!', font = pixul_font, alignment = 'center'}}
   self.spring:pull(0.2, 200, 10)
 end
-
-
 function GoButton:on_mouse_exit()
   self.text:set_text{{text = '[greenm5]GO!', font = pixul_font, alignment = 'center'}}
   self.selected = false
 end
-
 
 LockButton = Object:extend()
 LockButton:implement(GameObject)
@@ -754,8 +678,6 @@ function LockButton:init(args)
   if self.parent.locked then self.text = Text({{text = '[fgm5]' .. tostring(self.parent.locked and 'unlock' or 'lock'), font = pixul_font, alignment = 'center'}}, global_text_tags)
   else self.text = Text({{text = '[bg10]' .. tostring(self.parent.locked and 'unlock' or 'lock'), font = pixul_font, alignment = 'center'}}, global_text_tags) end
 end
-
-
 function LockButton:update(dt)
   self:update_game_object(dt)
 
@@ -774,16 +696,12 @@ function LockButton:update(dt)
     else self.shape.w = 32 end
   end
 end
-
-
 function LockButton:draw()
   graphics.push(self.x, self.y, 0, self.spring.x, self.spring.y)
     graphics.rectangle(self.x, self.y, self.shape.w, self.shape.h, 4, 4, (self.selected or self.parent.locked) and fg[0] or bg[1])
     self.text:draw(self.x, self.y + 1)
   graphics.pop()
 end
-
-
 function LockButton:on_mouse_enter()
   ui_hover1:play{pitch = random:float(1.3, 1.5), volume = 0.5}
   pop2:play{pitch = random:float(0.95, 1.05), volume = 0.5}
@@ -791,15 +709,10 @@ function LockButton:on_mouse_enter()
   self.text:set_text{{text = '[fgm5]' .. tostring(self.parent.locked and 'unlock' or 'lock'), font = pixul_font, alignment = 'center'}}
   self.spring:pull(0.2, 200, 10)
 end
-
-
 function LockButton:on_mouse_exit()
   if not self.parent.locked then self.text:set_text{{text = '[bg10]' .. tostring(self.parent.locked and 'unlock' or 'lock'), font = pixul_font, alignment = 'center'}} end
   self.selected = false
 end
-
-
-
 
 LevelButton = Object:extend()
 LevelButton:implement(GameObject)
@@ -809,10 +722,8 @@ function LevelButton:init(args)
   self.shape = Rectangle(self.x, self.y, 16, 16)
   self.text = Text({{text = '[bg10]' .. tostring(self.parent.shop_level), font = pixul_font, alignment = 'center'}}, global_text_tags)
   self.shop_xp = self.parent.shop_xp or 0
-  self.max_xp = (self.parent.shop_level == 1 and 3) or (self.parent.shop_level == 2 and 4) or (self.parent.shop_level == 3 and 5) or (self.parent.shop_level == 4 and 6) or (self.parent.shop_level == 5 and 0)
+  self.max_xp = 3
 end
-
-
 function LevelButton:update(dt)
   self:update_game_object(dt)
 
@@ -879,8 +790,6 @@ function LevelButton:update(dt)
     end
   end
 end
-
-
 function LevelButton:draw()
   graphics.push(self.x, self.y, 0, self.spring.x, self.spring.y)
     graphics.rectangle(self.x, self.y, self.shape.w, self.shape.h, 4, 4, self.selected and fg[0] or bg[1])
@@ -893,8 +802,6 @@ function LevelButton:draw()
     end
   graphics.pop()
 end
-
-
 function LevelButton:create_info_text()
   if self.info_text then
     self.info_text:deactivate()
@@ -902,41 +809,23 @@ function LevelButton:create_info_text()
   end
   self.info_text = nil
   if self.parent.shop_level < 5 then
-    local t11, t12 = get_shop_odds(self.parent.shop_level, 1), get_shop_odds(self.parent.shop_level+1, 1)
-    local t21, t22 = get_shop_odds(self.parent.shop_level, 2), get_shop_odds(self.parent.shop_level+1, 2)
-    local t31, t32 = get_shop_odds(self.parent.shop_level, 3), get_shop_odds(self.parent.shop_level+1, 3)
-    local t41, t42 = get_shop_odds(self.parent.shop_level, 4), get_shop_odds(self.parent.shop_level+1, 4)
     self.info_text = InfoText{group = main.current.ui}
     self.info_text:activate({
       {text = '[yellow]Lv.' .. self.parent.shop_level .. '[fg] shop, XP: [yellow]' .. self.shop_xp .. '/' .. self.max_xp .. '[fg], +1 XP cost: [yellow]5', font = pixul_font, alignment = 'center', height_multiplier = 1.5},
       {text = '[bg10]chances of units appearing on the shop', font = pixul_font, alignment = 'center', height_multiplier = 1.25},
       {text = '[yellow]current shop level                  [fgm10]next shop level', font = pixul_font, alignment = 'left', height_multiplier = 1.25},
-      {text = '[fg]tier 1: ' .. t11 .. '%' .. tostring(t11 < 10 and '  ' or '') .. '                                 [fgm8]tier 1: ' .. t12 .. '%', font = pixul_font, alignment = 'left', height_multiplier = 1.25},
-      {text = '[green]tier 2: ' .. t21 .. '%' .. tostring(t21 < 10 and '  ' or '') .. '                                 [fgm6]tier 2: ' .. t22 .. '%', font = pixul_font, alignment = 'left', height_multiplier = 1.25},
-      {text = '[blue]tier 3: ' .. t31 .. '%' .. tostring(t31 < 10 and '  ' or '') .. '                                 [fgm4]tier 3: ' .. t32 .. '%', font = pixul_font, alignment = 'left', height_multiplier = 1.25},
-      {text = '[purple]tier 4: ' .. t41 .. '%' .. tostring(t41 < 10 and '  ' or '') .. '                                 [fgm2]tier 4: ' .. t42 .. '%', font = pixul_font, alignment = 'left', height_multiplier = 1.25},
     }, nil, nil, nil, nil, 16, 4, nil, 2)
     self.info_text.x, self.info_text.y = gw/2, gh/2 - 45
   elseif self.parent.shop_level == 5 then
-    local t11 = get_shop_odds(self.parent.shop_level, 1)
-    local t21 = get_shop_odds(self.parent.shop_level, 2)
-    local t31 = get_shop_odds(self.parent.shop_level, 3)
-    local t41 = get_shop_odds(self.parent.shop_level, 4)
     self.info_text = InfoText{group = main.current.ui}
     self.info_text:activate({
       {text = '[yellow]Lv.' .. self.parent.shop_level .. '[fg] shop', font = pixul_font, alignment = 'center', height_multiplier = 1.5},
       {text = '[bg10]chances of units appearing on the shop', font = pixul_font, alignment = 'center', height_multiplier = 1.25},
       {text = '[yellow]current shop level', font = pixul_font, alignment = 'left', height_multiplier = 1.25},
-      {text = '[fg]tier 1: ' .. t11 .. '%', font = pixul_font, alignment = 'left', height_multiplier = 1.25},
-      {text = '[green]tier 2: ' .. t21 .. '%', font = pixul_font, alignment = 'left', height_multiplier = 1.25},
-      {text = '[blue]tier 3: ' .. t31 .. '%', font = pixul_font, alignment = 'left', height_multiplier = 1.25},
-      {text = '[purple]tier 4: ' .. t41 .. '%', font = pixul_font, alignment = 'left', height_multiplier = 1.25},
     }, nil, nil, nil, nil, 16, 4, nil, 2)
     self.info_text.x, self.info_text.y = gw/2, gh/2 - 45
   end
 end
-
-
 function LevelButton:on_mouse_enter()
   ui_hover1:play{pitch = random:float(1.3, 1.5), volume = 0.5}
   pop2:play{pitch = random:float(0.95, 1.05), volume = 0.5}
@@ -945,8 +834,6 @@ function LevelButton:on_mouse_enter()
   self.spring:pull(0.2, 200, 10)
   self:create_info_text()
 end
-
-
 function LevelButton:on_mouse_exit()
   self.text:set_text{{text = '[bg10]' .. tostring(self.parent.shop_level), font = pixul_font, alignment = 'center'}}
   self.selected = false
@@ -956,9 +843,6 @@ function LevelButton:on_mouse_exit()
   end
   self.info_text = nil
 end
-
-
-
 
 RerollButton = Object:extend()
 RerollButton:implement(GameObject)
@@ -985,8 +869,6 @@ function RerollButton:init(args)
     end
   end
 end
-
-
 function RerollButton:update(dt)
   self:update_game_object(dt)
 
@@ -1041,8 +923,6 @@ function RerollButton:update(dt)
     if input.r.pressed then self.selected = false end
   end
 end
-
-
 function RerollButton:draw()
   graphics.push(self.x, self.y, 0, self.spring.x, self.spring.y)
     if self.parent:is(Arena) then
@@ -1053,8 +933,6 @@ function RerollButton:draw()
     self.text:draw(self.x, self.y + 1)
   graphics.pop()
 end
-
-
 function RerollButton:on_mouse_enter()
   ui_hover1:play{pitch = random:float(1.3, 1.5), volume = 0.5}
   pop2:play{pitch = random:float(0.95, 1.05), volume = 0.5}
@@ -1070,8 +948,6 @@ function RerollButton:on_mouse_enter()
   end
   self.spring:pull(0.2, 200, 10)
 end
-
-
 function RerollButton:on_mouse_exit()
   if self.parent:is(BuyScreen) then
     self.text:set_text{{text = '[bg10]reroll: [yellow]2', font = pixul_font, alignment = 'center'}}
@@ -1085,9 +961,6 @@ function RerollButton:on_mouse_exit()
   self.selected = false
 end
 
-
-
-
 TutorialCharacterPart = Object:extend()
 TutorialCharacterPart:implement(GameObject)
 function TutorialCharacterPart:init(args)
@@ -1096,21 +969,15 @@ function TutorialCharacterPart:init(args)
   self.interact_with_mouse = true
   self.spring:pull(0.2, 200, 10)
 end
-
-
 function TutorialCharacterPart:update(dt)
   self:update_game_object(dt)
 end
-
-
 function TutorialCharacterPart:draw()
   graphics.push(self.x, self.y, 0, self.sx*self.spring.x, self.sy*self.spring.x)
     graphics.rectangle(self.x, self.y, 14, 14, 3, 3, self.highlighted and fg[0] or character_colors[self.character])
     graphics.print_centered(self.level, pixul_font, self.x + 0.5, self.y + 2, 0, 1, 1, 0, 0, self.highlighted and fg[-5] or _G[character_color_strings[self.character]][-5])
   graphics.pop()
 end
-
-
 function TutorialCharacterPart:on_mouse_enter()
   ui_hover1:play{pitch = random:float(1.3, 1.5), volume = 0.5}
   self.selected = true
@@ -1127,8 +994,6 @@ function TutorialCharacterPart:on_mouse_enter()
   }, nil, nil, nil, nil, 16, 4, nil, 2)
   self.info_text.x, self.info_text.y = gw/2, gh/2 + gh/4 - 12
 end
-
-
 function TutorialCharacterPart:on_mouse_exit()
   self.selected = false
   if self.info_text then
@@ -1137,8 +1002,6 @@ function TutorialCharacterPart:on_mouse_exit()
   end
   self.info_text = nil
 end
-
-
 
 CharacterPart = Object:extend()
 CharacterPart:implement(GameObject)
@@ -1163,8 +1026,6 @@ function CharacterPart:init(args)
   self.just_created = true
   self.t:after(0.1, function() self.just_created = false end)
 end
-
-
 function CharacterPart:update(dt)
   self:update_game_object(dt)
 
@@ -1234,8 +1095,6 @@ function CharacterPart:update(dt)
     part.y = self.y
   end
 end
-
-
 function CharacterPart:draw(y)
   graphics.push(self.x, self.y, 0, self.sx*self.spring.x, self.sy*self.spring.x)
     if self.grabbed then
@@ -1253,8 +1112,6 @@ function CharacterPart:draw(y)
     end
   graphics.pop()
 end
-
-
 function CharacterPart:on_mouse_enter()
   ui_hover1:play{pitch = random:float(1.3, 1.5), volume = 0.5}
   self.selected = true
@@ -1281,8 +1138,6 @@ function CharacterPart:on_mouse_enter()
   end
   ]]--
 end
-
-
 function CharacterPart:get_sale_price()
   if not character_tiers[self.character] then return 0 end
   local total = 0
@@ -1293,8 +1148,6 @@ function CharacterPart:get_sale_price()
   end
   return total
 end
-
-
 function CharacterPart:on_mouse_exit()
   self.selected = false
   if self.info_text then
@@ -1313,8 +1166,6 @@ function CharacterPart:on_mouse_exit()
   end
   ]]--
 end
-
-
 function CharacterPart:die()
   self.dead = true
   for _, part in ipairs(self.parts) do part:die() end
@@ -1334,21 +1185,14 @@ function CharacterPart:die()
   end
   ]]--
 end
-
-
 function CharacterPart:highlight()
   self.highlighted = true
   self.spring:pull(0.2, 200, 10)
 end
-
-
 function CharacterPart:unhighlight()
   self.highlighted = false
   self.spring:pull(0.05, 200, 10)
 end
-
-
-
 
 PassiveCard = Object:extend()
 PassiveCard:implement(GameObject)
@@ -1360,8 +1204,6 @@ function PassiveCard:init(args)
   self.passive_description = passive_descriptions[self.passive]
   self.spring:pull(0.2, 200, 10)
 end
-
-
 function PassiveCard:update(dt)
   self:update_game_object(dt)
   self.passive_name:update(dt)
@@ -1379,16 +1221,12 @@ function PassiveCard:update(dt)
     self:die()
   end
 end
-
-
 function PassiveCard:draw()
   graphics.push(self.x, self.y, 0, self.sx*self.spring.x, self.sy*self.spring.x)
     self.passive_name:draw(self.x, self.y - 20)
     _G[self.passive]:draw(self.x, self.y + 24, 0, 1, 1, 0, 0, fg[0])
   graphics.pop()
 end
-
-
 function PassiveCard:on_mouse_enter()
   self.selected = true
   ui_hover1:play{pitch = random:float(1.3, 1.5), volume = 0.5}
@@ -1399,16 +1237,12 @@ function PassiveCard:on_mouse_enter()
   }, nil, nil, nil, nil, 16, 4, nil, 2)
   self.info_text.x, self.info_text.y = gw/2, gh/2 + gh/4 - 6
 end
-
-
 function PassiveCard:on_mouse_exit()
   self.selected = false
   self.info_text:deactivate()
   self.info_text.dead = true
   self.info_text = nil
 end
-
-
 function PassiveCard:die()
   self.dead = true
   if self.info_text then
@@ -1417,9 +1251,6 @@ function PassiveCard:die()
     self.info_text = nil
   end
 end
-
-
-
 
 ItemCard = Object:extend()
 ItemCard:implement(GameObject)
@@ -1430,8 +1261,6 @@ function ItemCard:init(args)
   self.max_xp = (self.level == 0 and 0) or (self.level == 1 and 2) or (self.level == 2 and 3) or (self.level == 3 and 0)
   self.unlevellable = table.any(unlevellable_items, function(v) return v == self.passive end)
 end
-
-
 function ItemCard:update(dt)
   self:update_game_object(dt)
 
@@ -1490,8 +1319,6 @@ function ItemCard:update(dt)
     system.save_run(self.parent.level, self.parent.loop, gold, self.parent.units, self.parent.passives, self.parent.shop_level, self.parent.shop_xp, run_passive_pool, locked_state)
   end
 end
-
-
 function ItemCard:draw()
   graphics.push(self.x, self.y, 0, self.sx*self.spring.x, self.sy*self.spring.x)
     if self.selected then
@@ -1511,8 +1338,6 @@ function ItemCard:draw()
     end
   graphics.pop()
 end
-
-
 function ItemCard:create_info_text()
   if self.info_text then
     self.info_text:deactivate()
@@ -1537,24 +1362,18 @@ function ItemCard:create_info_text()
     self.info_text.x, self.info_text.y = gw/2, gh/2 + 10
   end
 end
-
-
 function ItemCard:on_mouse_enter()
   self.selected = true
   ui_hover1:play{pitch = random:float(1.3, 1.5), volume = 0.5}
   self.spring:pull(0.2, 200, 10)
   self:create_info_text()
 end
-
-
 function ItemCard:on_mouse_exit()
   self.selected = false
   self.info_text:deactivate()
   self.info_text.dead = true
   self.info_text = nil
 end
-
-
 function ItemCard:die()
   self.dead = true
   if self.info_text then
@@ -1564,7 +1383,6 @@ function ItemCard:die()
   end
 end
 
-
 function BuyScreen:refresh_cards()
   for i = 1, 3 do
     if self.cards[i] then
@@ -1572,8 +1390,6 @@ function BuyScreen:refresh_cards()
     end
   end
 end
-
-
 
 ShopCard = Object:extend()
 ShopCard:implement(GameObject)
@@ -1596,6 +1412,7 @@ end
 
 
 function ShopCard:refresh()
+  --[[
   self.owned = table.any(self.parent.units, function(v) return v.character == self.unit end)
   if self.owned then
     self.owned_n = 0
@@ -1609,8 +1426,8 @@ function ShopCard:refresh()
       end
     end
   end
+  ]]
 end
-
 
 function ShopCard:update(dt)
   self:update_game_object(dt)
@@ -1634,7 +1451,6 @@ function ShopCard:update(dt)
   end
 end
 
-
 function ShopCard:select()
   self.selected = true
   self.spring:pull(0.2, 200, 10)
@@ -1646,7 +1462,6 @@ function ShopCard:select()
     end
   end, nil, nil, 'pulse')
 end
-
 
 function ShopCard:unselect()
   self.selected = false
@@ -1889,7 +1704,8 @@ end
 
 function ClassIcon:draw()
   graphics.push(self.x, self.y, 0, self.sx*self.spring.x, self.sy*self.spring.x)
-    local i, j, k, n = class_set_numbers[self.class](self.units)
+    --local i, j, k, n = class_set_numbers[self.class](self.units)
+    local i,j,k,n=3,6,nil,0
     local next_n
     if self.parent:is(ShopCard) then
       next_n = n+1
@@ -1898,7 +1714,7 @@ function ClassIcon:draw()
       else
         if next_n > j then next_n = nil end
       end
-      if table.any(self.units, function(v) return v.character == self.character end) then next_n = nil end
+      --if table.any(self.units, function(v) return v.character == self.character end) then next_n = nil end
     end
 
     graphics.rectangle(self.x, self.y, 16, 24, 4, 4, self.highlighted and fg[0] or ((n >= i) and class_colors[self.class] or bg[3]))
@@ -2010,7 +1826,7 @@ end
 function ClassIcon:on_mouse_enter()
   ui_hover1:play{pitch = random:float(1.3, 1.5), volume = 0.5}
   self.spring:pull(0.2, 200, 10)
-  local i, j, k, owned = class_set_numbers[self.class](self.units)
+  local i, j, k, owned = 3,6,nil,0
   self.info_text = InfoText{group = main.current.ui}
   self.info_text:activate({
     {text = '[' .. class_color_strings[self.class] .. ']' .. (self.class == 'conjurer' and 'Builder' or self.class:capitalize()) .. '[fg] - owned: [yellow]' .. owned, font = pixul_font, alignment = 'center', height_multiplier = 1.25},
